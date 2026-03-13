@@ -1,0 +1,50 @@
+## This workflow authenticates to Google Cloud using Workload Identity Federation
+# and then runs a basic gcloud command to demonstrate success.
+
+name: Google Cloud Workload Identity Federation Test
+
+on:
+  push:
+    branches:
+      - main
+  # You can also use other events, like pull_request, etc.
+
+# Add an environment if you have configured attribute conditions based on environments
+# in your Workload Identity Provider.
+# environment: production
+
+permissions:
+  contents: 'read'
+  id-token: 'write' # This is required for the OIDC token to be generated
+
+jobs:
+  test-gcp-access:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 'Checkout repository'
+      uses: 'actions/checkout@v4'
+
+    - name: 'Authenticate to Google Cloud'
+      id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        # The full resource name of your Workload Identity Provider.
+        # This is the value you should have noted down earlier.
+        workload_identity_provider: 'projects/731671532190/locations/global/workloadIdentityPools/github/providers/github-actions-pool'
+        
+        # The email of the Google Cloud service account you want to impersonate.
+        # This is the service account you granted the 'Workload Identity User' role to.
+        service_account: 'github1@tribal-radar-432410-e6.iam.gserviceaccount.com'
+
+    - name: 'Set up Google Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    - name: 'Test Google Cloud Authentication'
+      run: |
+        echo "Successfully authenticated to Google Cloud."
+        echo "Listing GCS buckets..."
+        # Replace 'gcloud storage ls' with any gcloud command that requires authentication.
+        # This command will list all buckets accessible by the service account.
+        gcloud storage ls
+        echo "Listing complete."
