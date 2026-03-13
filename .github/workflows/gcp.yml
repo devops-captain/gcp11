@@ -1,4 +1,4 @@
-## This workflow authenticates to Google Cloud using Workload Identity Federation
+### This workflow authenticates to Google Cloud using Workload Identity Federation
 # and then runs a basic gcloud command to demonstrate success.
 
 name: Google Cloud Workload Identity Federation Test
